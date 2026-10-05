@@ -88,3 +88,7 @@ The gain is small (about one seed standard deviation) and improves the ranking o
 
 - Being LLM-generated, the texts may carry the generator's own affective stereotypes about new-immigrant experience. We did not audit them for such bias.
 - The generation targets are the generator's intended VA, not human annotations; the blended labels are pseudo-labels.
+
+## License
+
+The data (`data/`) and documentation are licensed under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) (`LICENSE`). The code (`rebuild_labels.py`) is licensed under the MIT License (`LICENSE-CODE`).
