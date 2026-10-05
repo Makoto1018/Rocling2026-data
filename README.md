@@ -1,6 +1,6 @@
 # ROCLING 2026 synthetic new-immigrant VA texts (YCW-ntust)
 
-The 300 synthetic texts and their pseudo-labels used by team YCW-ntust in the ROCLING-2026 shared task on Chinese dimensional sentiment analysis of new-immigrant texts, as described in our paper *YCW-ntust at ROCLING-2026 Shared Task: Leaderboard-Feedback Closed-Form Ensembling with LLM Direct Scoring for Chinese Valence–Arousal Regression* (Sections 3.4 and 4.5, Appendices on implementation and prompts).
+The 300 synthetic texts and their pseudo-labels used by team YCW-ntust in the ROCLING-2026 shared task on Chinese dimensional sentiment analysis of new-immigrant texts, as described in our paper *YCW-ntust at ROCLING-2026 Shared Task: Leaderboard-Feedback Closed-Form Ensembling with LLM Direct Scoring for Chinese Valence–Arousal Regression* (Sections 3.4 and 5.4, Appendices C and D). It also contains the LLM prompts referred to in the paper's prompt appendix.
 
 All texts are fictional, written in Traditional Chinese in the first-person voice of new immigrants in Taiwan. They contain no text from the shared-task data: none of the 300 texts duplicates, or shares any 12-character substring with, any of the 200 ROCLING 2026 validation texts or 1,100 test texts.
 
@@ -15,7 +15,9 @@ All texts are fictional, written in Traditional Chinese in the first-person voic
 | `data/gen_b_low_arousal.csv` | 150 | `ID,Text,gen_valence,gen_arousal` | Generator output, batch B (IDs `GB0001`–`GB0150`) |
 | `data/_teach_{rb,mb,e5}_{a,b}.csv` | 150 each | `ID,valence_rating,arousal_rating` | Predictions of the three teachers (`rb` RoBERTa, `mb` MacBERT, `e5` e5-SVR) on batch A / B |
 | `rebuild_labels.py` | | | Recomputes all three labeled files from the generator targets and teacher predictions and asserts an exact match |
-| `generation_prompt_reconstructed.md` | | | Post-hoc reconstruction of the generation prompt (see below) |
+| `prompts/synthetic_generation_reconstructed.md` | | | Post-hoc reconstruction of the generation prompt (see below) |
+| `prompts/qwen_arousal.md` | | | Exact prompts and scoring procedure of the Qwen3-4B and Qwen3-8B Arousal scorers in our final submission |
+| `prompts/claude_replay_rubric.md` | | | Claude scoring rubric rewritten after the competition for the replay on ROCLING 2025 data (not the lost competition prompt) |
 
 Files are UTF-8 with BOM. Valence and Arousal are on the task's 1–9 scale (Valence 1 = very negative, 9 = very positive; Arousal 1 = very calm, 9 = very agitated).
 
@@ -40,7 +42,7 @@ Claude (2 subagents) ──> 300 texts + target VA (gen_valence, gen_arousal)
 - **Batch A** (150 texts): high Arousal. Target Arousal 5.6–8.0, target Valence 2.0–8.5 (high-Arousal negative such as anger, panic, fear; high-Arousal positive such as excitement, joy, pride; a few mixed). Mean length 72.7 characters.
 - **Batch B** (150 texts): low to mid Arousal. Target Arousal 2.2–5.5, target Valence 3.0–7.5 (calm negative such as loneliness or resignation; calm neutral daily routine; calm positive such as contentment or gratitude). Mean length 52.0 characters.
 - **Style anchor.** Register and topics (marriage and in-laws, work, homesickness, children's education, identity documents) were anchored on the unlabeled ROCLING 2026 validation texts.
-- **Prompt.** The original prompts were **not archived**. `generation_prompt_reconstructed.md` was reconstructed afterwards from our design notes. A blind 30-text pilot with it (an Opus subagent that had not seen this set) gave target VA values distributed similarly to this set (not tested formally), but shorter texts (48 vs. 62 characters on average); a longer length specification would be needed to match. Running the prompt will produce *a comparable* set, not these texts: LLM generation is not deterministic and Claude Code exposes no temperature or seed.
+- **Prompt.** The original prompts were **not archived**. `prompts/synthetic_generation_reconstructed.md` was reconstructed afterwards from our design notes. A blind 30-text pilot with it (an Opus subagent that had not seen this set) gave target VA values distributed similarly to this set (not tested formally), but shorter texts (48 vs. 62 characters on average); a longer length specification would be needed to match. Running the prompt will produce *a comparable* set, not these texts: LLM generation is not deterministic and Claude Code exposes no temperature or seed.
 
 ### 2. Teachers
 
@@ -88,6 +90,11 @@ The gain is small (about one seed standard deviation) and improves the ranking o
 
 - Being LLM-generated, the texts may carry the generator's own affective stereotypes about new-immigrant experience. We did not audit them for such bias.
 - The generation targets are the generator's intended VA, not human annotations; the blended labels are pseudo-labels.
+
+## Other LLM prompts
+
+- **Qwen scorers** (`prompts/qwen_arousal.md`): the exact Traditional Chinese prompts of the two Qwen Arousal vectors in our final submission, copied verbatim from the competition code, with the paper's English translations.
+- **Claude scorer**: the prompts of the two Claude scoring passes in the competition were not archived, and no reconstruction has been validated against them. `prompts/claude_replay_rubric.md` is the rubric we rewrote afterwards from the paper's description and ran with Claude Opus 5.5 for the replay on ROCLING 2025 data (paper, Section 5.5). It approximates the original prompts and is not a copy.
 
 ## License
 
